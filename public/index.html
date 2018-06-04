@@ -1,0 +1,129 @@
+<html>
+    <head>
+        <title>Cognos Dashboard Embedded Sample Application</title>
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    </head>
+    <body>
+        <div id="left-col" class="column left">
+            <h1>Cognos Dashboard Embedded Sample Application</h1>
+            <section>
+                <h3>Step 1. Enter your Cognos Dashboard Embedded service connection details.</h3>
+                <p>You will first need a <a href="https://console.bluemix.net/catalog/services/ibm-cognos-dashboard-embedded">Cognos Dashboard Embedded</a> service on IBM Cloud. Once created, obtain your Client ID and Client Secret from "Service credentials", and enter them below.</p>
+                Client ID: <input style="width:100%;" id="client-id-input" type="text" value=""/>
+                Client Secret: <input style="width:100%;" id="client-secret-input" type="text" value=""/>
+            </section>
+            <section>
+                <h3>Step 2. Create a Session</h3>
+                <p>Press the following button to create a Cognos Dashboard Embedded session. A Session Code will be returned to the client.</p>
+                <button onclick="createSession()">Create Session</button>
+                <div>
+                    <span>Session Code: </span>
+                    <span id="session-code-span" data-session-code="">TBD</span>
+                    <span id="client-id-data-span" data-client-id: ""></span>
+                </div>
+            </section>
+            <section>
+                <h3>Step 3. Initialize API Framework</h3>
+                <p>Press the following button to initialize the API framework. It will also register callback to API events, which provides the ability for your application to handle errors within the framework.</p>
+                <button id="intialize-api-button" onclick="initializeAPIFramework()">Initialize API Framework</button>
+                <div>
+                    <span id="initialize-api-result-span"></span>
+                </div>
+            </section>
+            <section>
+                <h3>Step 4. Create New or Load Existing Dashboard</h3>
+                <h4>4a. Create a New Dashboard</h4>
+                <p>Press the following button to create a new dashboard. Press "OK" after choosing a template.</p>
+                <button onclick="createDashboard()">Create</button>
+                <h4>4b. Open an existing Dashboard</h4>
+                <p>Select a previously created dashboard stored in the Cloudant database in order to open it. Any previous dashboards you've created with this Cognos Dashboard Embedded service and saved (Step 6 below) will appear here.</p>
+                <p>Saved dashboards:</p>
+                <ul id="saved-dashboards-list">
+                </ul>
+            </section>
+            <section>
+                <h3>Step 5. Add a Data Source</h3>
+                <p>This sample app includes a utility to assist with building data source specifications (JSON format) from a CSV URL.
+                    The first row of the CSV will be analyzed. Based on column names and data values, a "best guess" of the column's data type,
+                    usage, default aggregation, and taxonomy will be inferred. Make sure to take a look at what is generated and just use this
+                    utility as a starting point. Details on creating data source specifications for Cognos Dashboard Embedded
+                    <a href="https://console.bluemix.net/docs/services/cognos-dashboard-embedded/working_with_datasources.html#working-with-data-sources">
+                        can be found here</a>.
+                <div>
+                    <p>Link to CSV file:</p>
+                    <input style="width:100%;" id="csv-url-input" type="url" value="https://raw.githubusercontent.com/samcennis/CognosDashboardEmbeddedSampleAppSetup/master/dataSetDemo.csv"/>
+                    <p>Provide a name for the data source:</p>
+                    <input style="width:100%;" id="data-spec-name-input" type="text" value="New Data Source"/>
+                    <button id="csv-load-button" onclick="generateCSVSpec()">Generate Data Source Spec From CSV URL</button>
+                    <p>Data Source Spec:</p>
+                    <textarea id="csv-spec-code-area" contenteditable="true" style="width:100%;" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
+                    <button id="add-data-source" onclick="addDataSource()">Add a Data Source Based on this Spec to Dashboard</button>
+                </div>
+            </section>
+            <section>
+                <h3>Step 6. Save Dashboard</h3>
+                <p>Generate a dashboard spec based on the current dashboard and save it to Cloudant. Provide the dashboard with a unique name below. Non-unique names will overwrite previous saved dashboards in the database.</p>
+                <input style="width:100%;" id="dashboard-name-input" type="text" />
+                <button id="save-dashboard-button" onclick="saveDashboard()">Save Current Dashboard</button>
+            </section>
+            <section>
+                <h3>Additional Utilities</h3>
+                <button id="undo-action-button" onclick="undoAction()">Undo</button>
+                <button id="redo-action-button" onclick="redoAction()">Redo</button>
+                <button id="toggle-properties-button" onclick="togglePropertiesPane()">Toggle properties pane</button>
+                <!-- Make radio button of 3 options-->
+                <form>
+                    <p>Set Dashboard Mode:</p>
+                    <div>
+                        <input type="radio" id="edit-mode-choice"
+                        name="dashboard-mode" value="edit" onclick="setDashboardMode()">
+                        <label for="edit-mode-choice">Edit</label>
+                        <input type="radio" id="view-mode-choice"
+                        name="dashboard-mode" value="view" onclick="setDashboardMode()">
+                        <label for="view-mode-choice">View</label>
+                        <input type="radio" id="edit-group-mode-choice"
+                        name="dashboard-mode" value="edit-group" onclick="setDashboardMode()">
+                        <label for="edit-group-mode-choice">Edit Group</label>
+                    </div>
+                </form>
+            </section>
+        </div>
+        <div id="right-col" class="column right">
+            <button id="toggle-left-column-button" style="float:left;" onclick="toggleLeftColumn()"><</button>
+            <div id="dashboard-container"></div>
+        </div>
+    </body>
+    <script type="text/javascript" src="https://dde-us-south.analytics.ibm.com/daas/CognosApi.js"></script>
+    <script type="text/javascript" src="/scripts/index.js"></script>
+    <style>
+        body{
+            font-family: 'Roboto', sans-serif;
+        }
+        .column {
+            float: left;
+
+        }
+
+        .left {
+            width: 25%;
+            background: #76AECE;
+            height: 100%;
+            overflow: scroll;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .right {
+            width: 75%;
+            background: #EEEEEE;
+            height: 100%;
+            overflow: scroll;
+        }
+
+        .saved-dashboard {
+            text-decoration: underline;
+            cursor: pointer;
+            margin: 8px;
+        }
+    </style>
+</html>

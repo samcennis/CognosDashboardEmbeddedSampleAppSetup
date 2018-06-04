@@ -1,0 +1,10 @@
+{
+  "_id": "_design/dashboardsDesignDoc",
+  "views": {
+    "clientIdView": {
+      "map": "function (doc) {\n  if (doc.clientId){\n      emit(doc.clientId);\n  }\n}"
+    }
+  },
+  "language": "javascript",
+  "indexes": {}
+}
