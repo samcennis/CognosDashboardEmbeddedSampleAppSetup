@@ -10,7 +10,9 @@ If you do not already have one, sign up for a free IBM Cloud account here: https
 
 Create an instance of IBM Cognos Dashboard Embedded in your IBM Cloud account here: https://console.bluemix.net/catalog/services/ibm-cognos-dashboard-embedded
 
-Select the "Lite" plan and then "Create". After creating the service, select "Service Credentials" from the left menu, then "New Credential" to generate a new set of credentials. Name the credentials whatever you wish. Select "View credentials", and copy the "client_id" and "client_secret" values into the appropriate input fields into an already-deployed version of the app here: https://cognos-dashboard-embedded-sample-app.mybluemix.net/
+Select the "Lite" plan and then "Create". After creating the service, select "Service Credentials" from the left menu, then "New Credential" to generate a new set of credentials. Name the credentials whatever you wish. Select "View credentials", and copy the "client_id" and "client_secret" values.
+
+Use these values when trying out the app here: https://cognos-dashboard-embedded-sample-app.mybluemix.net/
 
 Follow the steps in the left sidebar to create a session, create a new dashboard, add a data source, and build some visualizations. Skip to the section "Using this application" for a complete walk-through.
 
@@ -122,11 +124,3 @@ Now select "Add a Data Source Based on this Spec to Dashboard" to add it to the 
 Drag "Quantity" into another corner of the dashboard to see the total quantity sold across all data. Now click on the column in the column chart representing Camping Equipment. You'll see that the quantity decreases, because the dashboard filters according to this selection.
 
 7. Select "Save Current Dashboard" to save your dashboard. This is done by getting the dashboard specification of the currently opened dashboard as a JSON document and sending it to Cloudant. Your Cognos Dashboard Embedded Client ID will be added to this so the next time you start a session with that Client ID, previously dashboards you've saved will be loaded as options to open.
-
-
-
-
-
-
-
-
