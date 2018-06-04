@@ -1,6 +1,6 @@
 # Cognos Dashboard Embedded Sample App Setup
 
-This repository contains instructions to set up and deploy a sample application incorporating Cognos Dashboard Embedded dashboards. The app steps through API calls needed to initialize and use Cognos Dashboard Embedded within your app, using simple client-side JavaScript and a Node-RED backend as a sample. It uses Cloudant to demonstrate persisting dashboards as JSON docs between Cognos Dashboard Embedded sessions. It also includes a utility to help generate sample data source specifications for CSV files. Use this sample app to understand the basic flow needed to quickly augment your web application with interactive, engaging data visualization using Cognos Dashboard Embedded on IBM Cloud.
+This repository contains instructions to set up and deploy a sample application incorporating Cognos Dashboard Embedded dashboards. This app clearly lays out the API calls needed to initialize and use Cognos Dashboard Embedded within an app, using simple client-side JavaScript and a Node-RED backend as a sample. It uses Cloudant to demonstrate persisting dashboards as JSON docs between Cognos Dashboard Embedded sessions. It also includes a utility to help generate sample data source specifications for CSV files. Use this sample app to understand the basic flow needed to quickly augment your web application with interactive, engaging data visualization using Cognos Dashboard Embedded on IBM Cloud.
 
 Follow these instructions to familiarize yourself with the application and get it up and running yourself. 
 
