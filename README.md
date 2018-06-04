@@ -54,7 +54,7 @@ If you aren't already there, visit _your-app-name_.mybluemix.net/red and log in 
 
 Select the sandwich menu in the top right to get a drop down menu. Select Import > Clipboard.
 
-Copy the text from the flows.json file in this Github repo and paste it into the “Paste nodes here” section. Selet "current flow". Then click Import. Click to drop the imported nodes on the canvas. 
+Copy the text contained within the [flows.json](/flows.json) file and paste it into the “Paste nodes here” section. Selet "current flow". Then click Import. Click to drop the imported nodes on the canvas. 
 
 This is the complete RESTful API for the application. With just a couple of customizations, our backend will be all set up.
 
@@ -80,7 +80,7 @@ In the upper-right corner of the string, select "Create Database". Specify `dash
 
 #### Add a Design Document to the database to define our query.
 
-Within the "dashboards" database view, select the "+" button by Design Document and click "New Doc". Copy and paste the contents of the dashboardsDesignDoc.json file (contained in this GitHub repository) into the text editor. Completely replace the JSON object that is pre-populated in the text editor.
+Within the "dashboards" database view, select the "+" button by Design Document and click "New Doc". Copy and paste the contents of the [dashboardsDesignDoc.json](/dashboardsDesignDoc.json) file into the text editor. Completely replace the JSON object that is pre-populated in the text editor.
 
 This Design Document defines a Cloudant mechanism called a "view" that allows our app to filter its query based on the "clientId" property of dashboards that are saved. This is how we can filter dashboards at the database level to return only appropriate dashboards to a particular user. This app will only display dashboards to a user based on the clientId of their Cognos Dashboard Embedded service.
 
@@ -88,13 +88,15 @@ This Design Document defines a Cloudant mechanism called a "view" that allows ou
 
 We can add client-side code to our Node-RED application as well to display at the root of the domain (https://_your-app_name_.mybluemix.net/). We can place content (HTML, CSS, JS) within the "public" folder that we'd like to display when users visit.
 
-This GitHub repository contains the client-side code for this application in the "public" folder. We can simply replace the existing /public directory of the Node-RED Starter application with this and our app will be set up.
+This GitHub repository contains the client-side code for this application in the [/public](/public) folder. We can simply replace the existing /public directory of the Node-RED Starter application with this and our app will be set up.
 
-First, download the /public directory from this repository as a ZIP and extract it.
+First, download this repository as a ZIP folder and extract it to access the [/public](/public) directory.
 
-Then, replace the current /public directory within the /your-app-name directory on your local machine.
+Then, replace the current /public directory (within the /your-app-name directory) on your local machine with the [/public](/public) directory you just downloaded from this repository.
 
-Then run `cf push your-app-name` one more time to re-deploy the app to IBM Cloud. Your deployment of the app is ready to go!
+After replacing the /public directory, run `cf push your-app-name` one more time to re-deploy the app to IBM Cloud. 
+
+Your app is all set up!
 
 ## Using this application
 
