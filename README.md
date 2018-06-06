@@ -12,7 +12,7 @@ Create an instance of IBM Cognos Dashboard Embedded in your IBM Cloud account he
 
 Select the "Lite" plan and then "Create". After creating the service, select "Service Credentials" from the left menu, then "New Credential" to generate a new set of credentials. Name the credentials whatever you wish. Select "View credentials", and copy the "client_id" and "client_secret" values.
 
-Now that your have our Cognos Dashboard Embedded service credentials, you can try out this app first before [setting it up yourself with the instructions below](#deploy-the-node-red-starter-application).
+Now that your have our Cognos Dashboard Embedded service credentials, you can [try out this app first](https://cognos-dashboard-embedded-sample-app.mybluemix.net/) before [setting it up yourself with the instructions below](#deploy-the-node-red-starter-application).
 
 **Try this app out with the live version here:** https://cognos-dashboard-embedded-sample-app.mybluemix.net/
 
