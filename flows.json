@@ -1,359 +1,538 @@
 [
-  {
-    "id": "b76e420a.dfca6",
-    "type": "http in",
-    "z": "7e3f401a.41846",
-    "name": "",
-    "url": "\/session",
-    "method": "post",
-    "upload": false,
-    "swaggerDoc": "",
-    "x": 160,
-    "y": 240,
-    "wires": [
-      [
-        "a98f4ff3.3070d"
-      ]
-    ]
-  },
-  {
-    "id": "a77133e0.0acd3",
-    "type": "http response",
-    "z": "7e3f401a.41846",
-    "name": "response",
-    "statusCode": "",
-    "headers": {
-
+    {
+        "id": "b76e420a.dfca6",
+        "type": "http in",
+        "z": "7e3f401a.41846",
+        "name": "",
+        "url": "/session",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 160,
+        "y": 240,
+        "wires": [
+            [
+                "a98f4ff3.3070d"
+            ]
+        ]
     },
-    "x": 720,
-    "y": 240,
-    "wires": [
-
-    ]
-  },
-  {
-    "id": "e36930c8.f0acb",
-    "type": "http request",
-    "z": "7e3f401a.41846",
-    "name": "",
-    "method": "POST",
-    "ret": "txt",
-    "url": "https:\/\/dde-us-south.analytics.ibm.com\/daas\/v1\/session",
-    "tls": "",
-    "x": 550,
-    "y": 240,
-    "wires": [
-      [
-        "a77133e0.0acd3"
-      ]
-    ]
-  },
-  {
-    "id": "a98f4ff3.3070d",
-    "type": "function",
-    "z": "7e3f401a.41846",
-    "name": "Set MSG payload",
-    "func": "var token = JSON.parse(msg.payload).clientId + \":\" + JSON.parse(msg.payload).clientSecret;\nvar hash = Buffer.from(token).toString(\"base64\"); \nmsg.headers = {'Authorization': \"Basic \" + hash}\n\nmsg.payload = {\n    'expiresIn': 3600,\n    'webDomain': 'http:\/\/localhost:1880'\n};\nreturn msg;",
-    "outputs": 1,
-    "noerr": 0,
-    "x": 350,
-    "y": 240,
-    "wires": [
-      [
-        "e36930c8.f0acb"
-      ]
-    ]
-  },
-  {
-    "id": "379b10cb.7d7f7",
-    "type": "comment",
-    "z": "7e3f401a.41846",
-    "name": "POST \/session : Create a Session",
-    "info": "",
-    "x": 220,
-    "y": 200,
-    "wires": [
-
-    ]
-  },
-  {
-    "id": "94a3759c.db0f78",
-    "type": "comment",
-    "z": "7e3f401a.41846",
-    "name": "GET \/dashboards : Get list of saved dashboards",
-    "info": "",
-    "x": 260,
-    "y": 300,
-    "wires": [
-
-    ]
-  },
-  {
-    "id": "968e9a47.c584a8",
-    "type": "comment",
-    "z": "7e3f401a.41846",
-    "name": "PUT \/dashboards\/:name : Save\/update a dashboard with unique name",
-    "info": "",
-    "x": 330,
-    "y": 420,
-    "wires": [
-
-    ]
-  },
-  {
-    "id": "4cfcde34.3c6e2",
-    "type": "http in",
-    "z": "7e3f401a.41846",
-    "name": "",
-    "url": "\/dashboards",
-    "method": "get",
-    "upload": false,
-    "swaggerDoc": "",
-    "x": 160,
-    "y": 340,
-    "wires": [
-      [
-        "1d34f1f7.18f1ee"
-      ]
-    ]
-  },
-  {
-    "id": "35319079.a8bf6",
-    "type": "http response",
-    "z": "7e3f401a.41846",
-    "name": "",
-    "statusCode": "",
-    "headers": {
-
+    {
+        "id": "a77133e0.0acd3",
+        "type": "http response",
+        "z": "7e3f401a.41846",
+        "name": "response",
+        "statusCode": "",
+        "headers": {},
+        "x": 720,
+        "y": 240,
+        "wires": []
     },
-    "x": 741,
-    "y": 340,
-    "wires": [
-
-    ]
-  },
-  {
-    "id": "85a2e837.03ff98",
-    "type": "http in",
-    "z": "7e3f401a.41846",
-    "name": "",
-    "url": "\/dashboards\/:name",
-    "method": "put",
-    "upload": false,
-    "swaggerDoc": "",
-    "x": 190,
-    "y": 460,
-    "wires": [
-      [
-        "66af0cf5.f8f1b4"
-      ]
-    ]
-  },
-  {
-    "id": "66af0cf5.f8f1b4",
-    "type": "function",
-    "z": "7e3f401a.41846",
-    "name": "Set _id to :name (for new dashboards)",
-    "func": "msg.payload = JSON.parse(msg.payload);\n\n\/\/Case of \"Save As\" different name. \n\/\/If the URL param \"name\" is different than the the ID, then delete the _rev so a new doc can be saved.\nif (msg.payload._id && msg.req.params.name){\n    if (msg.payload._id != msg.req.params.name  ){\n        if (msg.payload._rev){\n            delete msg.payload._rev;\n        }\n    }\n}\n\n\/\/Set ID to name (new docs) or replace ID with name (for existing docs)\nmsg.payload._id = msg.req.params.name;\n\nreturn msg;",
-    "outputs": 1,
-    "noerr": 0,
-    "x": 470,
-    "y": 460,
-    "wires": [
-      [
-        "e3be7126.263b6",
-        "1a535d9c.e80c62"
-      ]
-    ]
-  },
-  {
-    "id": "e3be7126.263b6",
-    "type": "cloudant out",
-    "z": "7e3f401a.41846",
-    "name": "",
-    "cloudant": "4d2a7c31.ef3834",
-    "database": "dashboards",
-    "service": "_ext_",
-    "payonly": true,
-    "operation": "insert",
-    "x": 730,
-    "y": 440,
-    "wires": [
-
-    ]
-  },
-  {
-    "id": "1a535d9c.e80c62",
-    "type": "http response",
-    "z": "7e3f401a.41846",
-    "name": "",
-    "statusCode": "",
-    "headers": {
-
+    {
+        "id": "e36930c8.f0acb",
+        "type": "http request",
+        "z": "7e3f401a.41846",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "url": "https://dde-us-south.analytics.ibm.com/daas/v1/session",
+        "tls": "",
+        "x": 550,
+        "y": 240,
+        "wires": [
+            [
+                "a77133e0.0acd3"
+            ]
+        ]
     },
-    "x": 710,
-    "y": 480,
-    "wires": [
-
-    ]
-  },
-  {
-    "id": "1d34f1f7.18f1ee",
-    "type": "function",
-    "z": "7e3f401a.41846",
-    "name": "Filter Query by Client ID",
-    "func": "msg.payload.keys = [msg.req.query.clientId,\"SAMPLE\"];\n\nmsg.payload.include_docs = true;\n\nreturn msg;",
-    "outputs": 1,
-    "noerr": 0,
-    "x": 378,
-    "y": 340,
-    "wires": [
-      [
-        "c6236849.fccf38"
-      ]
-    ]
-  },
-  {
-    "id": "c6236849.fccf38",
-    "type": "cloudantplus in",
-    "z": "7e3f401a.41846",
-    "name": "",
-    "cloudant": "84000882.c194f8",
-    "database": "dashboards",
-    "service": "_ext_",
-    "search": "_view_",
-    "design": "dashboardsDesignDoc",
-    "index": "clientIdView",
-    "x": 588,
-    "y": 340,
-    "wires": [
-      [
-        "35319079.a8bf6"
-      ]
-    ]
-  },
-  {
-    "id": "7aae7244.61681c",
-    "type": "http in",
-    "z": "7e3f401a.41846",
-    "name": "",
-    "url": "\/csvspec",
-    "method": "post",
-    "upload": false,
-    "swaggerDoc": "",
-    "x": 157,
-    "y": 594,
-    "wires": [
-      [
-        "f5e53ae3.69f368"
-      ]
-    ]
-  },
-  {
-    "id": "a21fa9a9.4a2348",
-    "type": "comment",
-    "z": "7e3f401a.41846",
-    "name": "POST \/csvspec : Generate a sample data source specification based on a CSV URL and data source name",
-    "info": "",
-    "x": 438,
-    "y": 554,
-    "wires": [
-
-    ]
-  },
-  {
-    "id": "2f250bcc.1d9fb4",
-    "type": "csv",
-    "z": "7e3f401a.41846",
-    "name": "",
-    "sep": ",",
-    "hdrin": true,
-    "hdrout": "",
-    "multi": "mult",
-    "ret": "\\n",
-    "temp": "",
-    "x": 696,
-    "y": 595,
-    "wires": [
-      [
-        "c4566343.a0376"
-      ]
-    ]
-  },
-  {
-    "id": "c4566343.a0376",
-    "type": "function",
-    "z": "7e3f401a.41846",
-    "name": "Create Data Source Spec based on First Row of CSV",
-    "func": "\/\/The following code is inspired heavily from data source spec helper code created by a fellow IBMer. \n\nvar cols = [];\n\n\/\/Create a safe ID for the data spec\nvar specName = msg.specName;\n\n\/\/ Create a Spec ID safe for the module\n\/\/ change non alphanumeric to underscore\nsafeSpecId = specName.replace(new RegExp('[\\\\W]', 'g'), '_');\n\/\/ if the identifier doesn't start with a letter, prepend an 'i'\nif (!(safeSpecId.match(\/^[a-z]\/i))) safeSpecId = \"i\"+safeSpecId;\n\nfor (var col in msg.payload[0]){\n    \n    console.log(col);\n    console.log(typeof(msg.payload[0][col]));\n    \n    var colName = col;\n    var value = msg.payload[0][col];\n    \n    var colType = typeof(value);\n    \n    var retType = \"\";\n    var retUsage = \"\";\n    var retAggregate = \"\";\n    var retTaxonomy = \"\";\n    \n    \/\/Determine if int or decimal\n    if (colType === \"number\"){\n        if (value.toString().indexOf(\".\") == -1){\n            \/\/Integer\n            retType = \"BIGINT\";\n            retUsage = \"fact\";\n            retAggregate = \"total\";\n        } else {\n            \/\/Floating point number\n            retType = \"DOUBLE\";\n            retUsage = \"fact\";\n            retAggregate = \"total\";\n        }\n    } else if (colType === \"string\"){\n        retType = \"NVARCHAR(256)\";\n        retUsage = \"attribute\";\n        retAggregate = \"countDistinct\";\n    } \n    \n    var colNameLower = colName.toLowerCase();\n        \n    \/\/ a few more tweaks to get a better match to the schema\n    if ((retUsage === \"fact\") && (colNameLower.indexOf(\"average\") > -1)) retAggregate=\"average\";\n    if ((retUsage === \"fact\") && (colNameLower.indexOf(\"avg\") > -1)) retAggregate=\"average\";\n    if ((retUsage === \"fact\") && (colNameLower.indexOf(\"percent\") > -1)) retAggregate=\"average\";\n    if ((retUsage === \"fact\") && (colNameLower.indexOf(\"%\") > -1)) retAggregate=\"average\";\n    \n    \/\/Look at the col name and make taxonomy assumptions based on that\n    if ( colNameLower.indexOf(\"date\") > -1) {\n        retTaxonomy = \"cDate\";\n        \/\/Assuming this is date data type\n        retType=\"DATE\";\n    }\n    else if ( colNameLower.indexOf(\"year\") > -1) retTaxonomy = \"cYear\";\n    else if ( colNameLower.indexOf(\"quarter\") > -1) retTaxonomy = \"cQuarter\";\n    else if ( colNameLower.indexOf(\"season\") > -1) retTaxonomy = \"cSeason\";\n    else if ( colNameLower.indexOf(\"month\") > -1) retTaxonomy = \"cMonth\";\n    else if ( colNameLower.indexOf(\"week\") > -1) retTaxonomy = \"cWeek\";\n    else if ( colNameLower.indexOf(\"day\") > -1) retTaxonomy = \"cDay\";\n    else if ( colNameLower.indexOf(\"hour\") > -1) retTaxonomy = \"cHour\";\n    else if ( colNameLower.indexOf(\"minute\") > -1) retTaxonomy = \"cMinute\";\n    else if ( colNameLower.indexOf(\"second\") > -1) retTaxonomy = \"cSecond\";\n    else if ( colNameLower.indexOf(\"subcontinent\") > -1) retTaxonomy = \"cSubcontinent\";\n    else if ( colNameLower.indexOf(\"continent\") > -1) retTaxonomy = \"cContinent\";\n    else if ( colNameLower.indexOf(\"country\") > -1) retTaxonomy = \"cCountry\";\n    else if ( colNameLower.indexOf(\"region\") > -1) retTaxonomy = \"cRegion\";\n    else if ( colNameLower.indexOf(\"prov\") > -1) retTaxonomy = \"cStateProvince\";\n    else if ( colNameLower.indexOf(\"state\") > -1) retTaxonomy = \"cStateProvince\";\n    else if ( colNameLower.indexOf(\"county\") > -1) retTaxonomy = \"cCounty\";\n    else if ( colNameLower.indexOf(\"city\") > -1) retTaxonomy = \"cCity\";\n    else if ( colNameLower.indexOf(\"zip\") > -1) retTaxonomy = \"cPostalCode\";\n    else if ( colNameLower.indexOf(\"postal\") > -1) retTaxonomy = \"cPostalCode\";\n    else if ( colNameLower.indexOf(\"address\") > -1) retTaxonomy = \"cStreetAddress\";\n    else if ( colNameLower.indexOf(\"street\") > -1) retTaxonomy = \"cStreetAddress\";\n    else if ( colNameLower.indexOf(\"position\") > -1) retTaxonomy = \"cPosition\";\n    else if ( colNameLower.indexOf(\"latitude\") > -1) retTaxonomy = \"cLatitude\";\n    else if ( colNameLower.indexOf(\"longitude\") > -1) retTaxonomy = \"cLongitude\";\n    else retTaxonomy = \"cNone\";\n    \n    \/\/var retCol = {};\n    \n    \/\/ Make colname safe for the data spec column name\n    \/\/ change non alphanumeric to underscore\n    safeColName = colName.replace(new RegExp('[\\\\W]', 'g'), '_');\n    \/\/ if the identifier doesn't start with a letter, prepend an 'i'\n    if (!(safeColName.match(\/^[a-z]\/i))) safeColName = \"i\"+safeColName;\n    \n    var retCol = {\n        \"name\": safeColName,\n        \"datatype\":retType,\n        \"nullable\":true,\n        \"description\":colName,\n        \"label\":colName,\n        \"usage\": retUsage,\n        \"regularAggregate\":retAggregate\n    };\n    \n    \/\/ apply the taxonomy if one was identified. geo\/time fields should be treated as attributes regardless of datatype\n    if (!(retTaxonomy === \"cNone\")){\n        retCol[\"taxonomyFamily\"] = retTaxonomy;\n        retCol[\"usage\"] = \"attribute\";\n        retCol[\"regularAggregate\"] = \"countDistinct\";\n    }\n\n    cols.push(retCol);\n}\n\nconsole.log(cols);\n\nvar csvSpec = { \n    \"xsd\": \"https:\/\/ibm.com\/daas\/module\/1.0\/module.xsd\", \n    \"source\": { \n        \"id\": safeSpecId, \n        \"srcUrl\": { \n            \"sourceUrl\": msg.url, \n            \"mimeType\": \"text\/csv\", \n            \"property\": [ \n                { \n                    \"name\": \"separator\", \n                    \"value\": \", \" \n                    \n                }, \n                { \n                    \"name\": \"ColumnNamesLine\", \n                    \"value\": \"true\" \n                } \n            ] \n        } \n    }, \n    \"table\": { \n        \"name\": specName, \n        \"description\": \"description of the table for visual hints \", \n        \"column\": cols \n    }, \n    \"label\": specName, \n    \"identifier\": safeSpecId \n};\n\nmsg.payload = csvSpec;\n\nreturn msg;",
-    "outputs": 1,
-    "noerr": 0,
-    "x": 430,
-    "y": 657,
-    "wires": [
-      [
-        "cc28278b.f10758"
-      ]
-    ]
-  },
-  {
-    "id": "cc28278b.f10758",
-    "type": "http response",
-    "z": "7e3f401a.41846",
-    "name": "",
-    "statusCode": "",
-    "headers": {
-
+    {
+        "id": "a98f4ff3.3070d",
+        "type": "function",
+        "z": "7e3f401a.41846",
+        "name": "Set MSG payload",
+        "func": "var token = JSON.parse(msg.payload).clientId + \":\" + JSON.parse(msg.payload).clientSecret;\nvar hash = Buffer.from(token).toString(\"base64\"); \nmsg.headers = {'Authorization': \"Basic \" + hash};\n\nvar webDomain = JSON.parse(msg.payload).webDomain;\n\nmsg.payload = {\n    'expiresIn': 3600,\n    'webDomain': webDomain\n};\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 350,
+        "y": 240,
+        "wires": [
+            [
+                "e36930c8.f0acb"
+            ]
+        ]
     },
-    "x": 735,
-    "y": 655,
-    "wires": [
-
-    ]
-  },
-  {
-    "id": "6bad9a44.655424",
-    "type": "http request",
-    "z": "7e3f401a.41846",
-    "name": "",
-    "method": "GET",
-    "ret": "txt",
-    "url": "",
-    "tls": "",
-    "x": 553,
-    "y": 596,
-    "wires": [
-      [
-        "2f250bcc.1d9fb4"
-      ]
-    ]
-  },
-  {
-    "id": "f5e53ae3.69f368",
-    "type": "function",
-    "z": "7e3f401a.41846",
-    "name": "Set CSV URL",
-    "func": "msg.url = JSON.parse(msg.payload).url;\nmsg.specName = JSON.parse(msg.payload).specName;\n\nreturn msg;",
-    "outputs": 1,
-    "noerr": 0,
-    "x": 381,
-    "y": 593,
-    "wires": [
-      [
-        "6bad9a44.655424"
-      ]
-    ]
-  },
-  {
-    "id": "9a1068b3.6cefb8",
-    "type": "comment",
-    "z": "7e3f401a.41846",
-    "name": "Cognos Dashboard Embedded Sample App REST API",
-    "info": "",
-    "x": 278.46154785156,
-    "y": 145.3846282959,
-    "wires": [
-
-    ]
-  }
+    {
+        "id": "379b10cb.7d7f7",
+        "type": "comment",
+        "z": "7e3f401a.41846",
+        "name": "POST /session : Create a Cognos Dashboard Embedded Session",
+        "info": "",
+        "x": 310,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "94a3759c.db0f78",
+        "type": "comment",
+        "z": "7e3f401a.41846",
+        "name": "GET /dashboards : Get saved dashboards from Cloudant",
+        "info": "",
+        "x": 290,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "968e9a47.c584a8",
+        "type": "comment",
+        "z": "7e3f401a.41846",
+        "name": "PUT /dashboards/:name : Save/update a dashboard in Cloudant by name",
+        "info": "",
+        "x": 340,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "4cfcde34.3c6e2",
+        "type": "http in",
+        "z": "7e3f401a.41846",
+        "name": "",
+        "url": "/dashboards",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 160,
+        "y": 340,
+        "wires": [
+            [
+                "1d34f1f7.18f1ee"
+            ]
+        ]
+    },
+    {
+        "id": "35319079.a8bf6",
+        "type": "http response",
+        "z": "7e3f401a.41846",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 741,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "85a2e837.03ff98",
+        "type": "http in",
+        "z": "7e3f401a.41846",
+        "name": "",
+        "url": "/dashboards/:name",
+        "method": "put",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 190,
+        "y": 460,
+        "wires": [
+            [
+                "66af0cf5.f8f1b4"
+            ]
+        ]
+    },
+    {
+        "id": "66af0cf5.f8f1b4",
+        "type": "function",
+        "z": "7e3f401a.41846",
+        "name": "Set _id to :name (for new dashboards)",
+        "func": "msg.payload = JSON.parse(msg.payload);\n\n//Case of \"Save As\" different name. \n//If the URL param \"name\" is different than the the ID, then delete the _rev so a new doc can be saved.\nif (msg.payload._id && msg.req.params.name){\n    if (msg.payload._id != msg.req.params.name  ){\n        if (msg.payload._rev){\n            delete msg.payload._rev;\n        }\n    }\n}\n\n//Set ID to name (new docs) or replace ID with name (for existing docs)\nmsg.payload._id = msg.req.params.name;\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 470,
+        "y": 460,
+        "wires": [
+            [
+                "e3be7126.263b6",
+                "1a535d9c.e80c62"
+            ]
+        ]
+    },
+    {
+        "id": "e3be7126.263b6",
+        "type": "cloudant out",
+        "z": "7e3f401a.41846",
+        "name": "",
+        "cloudant": "4d2a7c31.ef3834",
+        "database": "dashboards",
+        "service": "_ext_",
+        "payonly": true,
+        "operation": "insert",
+        "x": 730,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "1a535d9c.e80c62",
+        "type": "http response",
+        "z": "7e3f401a.41846",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 710,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "1d34f1f7.18f1ee",
+        "type": "function",
+        "z": "7e3f401a.41846",
+        "name": "Filter Query by Client ID",
+        "func": "msg.payload.keys = [msg.req.query.clientId,\"SAMPLE\"];\n\nmsg.payload.include_docs = true;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 378,
+        "y": 340,
+        "wires": [
+            [
+                "c6236849.fccf38"
+            ]
+        ]
+    },
+    {
+        "id": "c6236849.fccf38",
+        "type": "cloudantplus in",
+        "z": "7e3f401a.41846",
+        "name": "",
+        "cloudant": "84000882.c194f8",
+        "database": "dashboards",
+        "service": "_ext_",
+        "search": "_view_",
+        "design": "dashboardsDesignDoc",
+        "index": "clientIdView",
+        "x": 588,
+        "y": 340,
+        "wires": [
+            [
+                "35319079.a8bf6"
+            ]
+        ]
+    },
+    {
+        "id": "7aae7244.61681c",
+        "type": "http in",
+        "z": "7e3f401a.41846",
+        "name": "",
+        "url": "/csvspec",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 156,
+        "y": 719,
+        "wires": [
+            [
+                "f5e53ae3.69f368"
+            ]
+        ]
+    },
+    {
+        "id": "a21fa9a9.4a2348",
+        "type": "comment",
+        "z": "7e3f401a.41846",
+        "name": "POST /csvspec : Generate a sample data source specification based on a CSV URL",
+        "info": "",
+        "x": 367,
+        "y": 679,
+        "wires": []
+    },
+    {
+        "id": "2f250bcc.1d9fb4",
+        "type": "csv",
+        "z": "7e3f401a.41846",
+        "name": "",
+        "sep": ",",
+        "hdrin": true,
+        "hdrout": "",
+        "multi": "mult",
+        "ret": "\\n",
+        "temp": "",
+        "x": 695,
+        "y": 720,
+        "wires": [
+            [
+                "c4566343.a0376"
+            ]
+        ]
+    },
+    {
+        "id": "c4566343.a0376",
+        "type": "function",
+        "z": "7e3f401a.41846",
+        "name": "Create Data Source Spec based on First Row of CSV",
+        "func": "//The following code is inspired heavily from data source spec helper code created by a fellow IBMer.\n\nvar cols = [];\n\n//Create a safe ID for the data spec\nvar specName = msg.specName;\n\n// Create a Spec ID safe for the module\n// change non alphanumeric to underscore\nsafeSpecId = specName.replace(new RegExp('[\\\\W]', 'g'), '_');\n// if the identifier doesn't start with a letter, prepend an 'i'\nif (!(safeSpecId.match(/^[a-z]/i))) safeSpecId = \"i\"+safeSpecId;\n\nfor (var col in msg.payload[0]){\n    \n    console.log(col);\n    console.log(typeof(msg.payload[0][col]));\n    \n    var colName = col;\n    var value = msg.payload[0][col];\n    \n    var colType = typeof(value);\n    \n    var retType = \"\";\n    var retUsage = \"\";\n    var retAggregate = \"\";\n    var retTaxonomy = \"\";\n    \n    //Determine if int or decimal\n    if (colType === \"number\"){\n        if (value.toString().indexOf(\".\") == -1){\n            //Integer\n            retType = \"BIGINT\";\n            retUsage = \"fact\";\n            retAggregate = \"total\";\n        } else {\n            //Floating point number\n            retType = \"DOUBLE\";\n            retUsage = \"fact\";\n            retAggregate = \"total\";\n        }\n    } else if (colType === \"string\"){\n        retType = \"NVARCHAR(256)\";\n        retUsage = \"attribute\";\n        retAggregate = \"countDistinct\";\n    } \n    \n    var colNameLower = colName.toLowerCase();\n        \n    // a few more tweaks to get a better match to the schema\n    if ((retUsage === \"fact\") && (colNameLower.indexOf(\"average\") > -1)) retAggregate=\"average\";\n    if ((retUsage === \"fact\") && (colNameLower.indexOf(\"avg\") > -1)) retAggregate=\"average\";\n    if ((retUsage === \"fact\") && (colNameLower.indexOf(\"percent\") > -1)) retAggregate=\"average\";\n    if ((retUsage === \"fact\") && (colNameLower.indexOf(\"%\") > -1)) retAggregate=\"average\";\n    \n    //Look at the col name and make taxonomy assumptions based on that\n    if ( colNameLower.indexOf(\"date\") > -1) {\n        retTaxonomy = \"cDate\";\n        //Assuming this is date data type\n        retType=\"DATE\";\n    }\n    else if ( colNameLower.indexOf(\"year\") > -1) retTaxonomy = \"cYear\";\n    else if ( colNameLower.indexOf(\"quarter\") > -1) retTaxonomy = \"cQuarter\";\n    else if ( colNameLower.indexOf(\"season\") > -1) retTaxonomy = \"cSeason\";\n    else if ( colNameLower.indexOf(\"month\") > -1) retTaxonomy = \"cMonth\";\n    else if ( colNameLower.indexOf(\"week\") > -1) retTaxonomy = \"cWeek\";\n    else if ( colNameLower.indexOf(\"day\") > -1) retTaxonomy = \"cDay\";\n    else if ( colNameLower.indexOf(\"hour\") > -1) retTaxonomy = \"cHour\";\n    else if ( colNameLower.indexOf(\"minute\") > -1) retTaxonomy = \"cMinute\";\n    else if ( colNameLower.indexOf(\"second\") > -1) retTaxonomy = \"cSecond\";\n    else if ( colNameLower.indexOf(\"subcontinent\") > -1) retTaxonomy = \"cSubcontinent\";\n    else if ( colNameLower.indexOf(\"continent\") > -1) retTaxonomy = \"cContinent\";\n    else if ( colNameLower.indexOf(\"country\") > -1) retTaxonomy = \"cCountry\";\n    else if ( colNameLower.indexOf(\"region\") > -1) retTaxonomy = \"cRegion\";\n    else if ( colNameLower.indexOf(\"prov\") > -1) retTaxonomy = \"cStateProvince\";\n    else if ( colNameLower.indexOf(\"state\") > -1) retTaxonomy = \"cStateProvince\";\n    else if ( colNameLower.indexOf(\"county\") > -1) retTaxonomy = \"cCounty\";\n    else if ( colNameLower.indexOf(\"city\") > -1) retTaxonomy = \"cCity\";\n    else if ( colNameLower.indexOf(\"zip\") > -1) retTaxonomy = \"cPostalCode\";\n    else if ( colNameLower.indexOf(\"postal\") > -1) retTaxonomy = \"cPostalCode\";\n    else if ( colNameLower.indexOf(\"address\") > -1) retTaxonomy = \"cStreetAddress\";\n    else if ( colNameLower.indexOf(\"street\") > -1) retTaxonomy = \"cStreetAddress\";\n    else if ( colNameLower.indexOf(\"position\") > -1) retTaxonomy = \"cPosition\";\n    else if ( colNameLower.indexOf(\"latitude\") > -1) retTaxonomy = \"cLatitude\";\n    else if ( colNameLower.indexOf(\"longitude\") > -1) retTaxonomy = \"cLongitude\";\n    else retTaxonomy = \"cNone\";\n    \n    //var retCol = {};\n    \n    // Make colname safe for the data spec column name\n    // change non alphanumeric to underscore\n    safeColName = colName.replace(new RegExp('[\\\\W]', 'g'), '_');\n    // if the identifier doesn't start with a letter, prepend an 'i'\n    if (!(safeColName.match(/^[a-z]/i))) safeColName = \"i\"+safeColName;\n    \n    var retCol = {\n        \"name\": safeColName,\n        \"datatype\":retType,\n        \"nullable\":true,\n        \"description\":colName,\n        \"label\":colName,\n        \"usage\": retUsage,\n        \"regularAggregate\":retAggregate\n    };\n    \n    // apply the taxonomy if one was identified. geo/time fields should be treated as attributes regardless of datatype\n    if (!(retTaxonomy === \"cNone\")){\n        retCol[\"taxonomyFamily\"] = retTaxonomy;\n        retCol[\"usage\"] = \"attribute\";\n        retCol[\"regularAggregate\"] = \"countDistinct\";\n    }\n\n    cols.push(retCol);\n}\n\nconsole.log(cols);\n\nvar csvSpec = { \n    \"xsd\": \"https://ibm.com/daas/module/1.0/module.xsd\", \n    \"source\": { \n        \"id\": safeSpecId, \n        \"srcUrl\": { \n            \"sourceUrl\": msg.url, \n            \"mimeType\": \"text/csv\", \n            \"property\": [ \n                { \n                    \"name\": \"separator\", \n                    \"value\": \", \" \n                    \n                }, \n                { \n                    \"name\": \"ColumnNamesLine\", \n                    \"value\": \"true\" \n                } \n            ] \n        } \n    }, \n    \"table\": { \n        \"name\": specName, \n        \"description\": \"description of the table for visual hints \", \n        \"column\": cols \n    }, \n    \"label\": specName, \n    \"identifier\": safeSpecId \n};\n\nmsg.payload = csvSpec;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 429,
+        "y": 782,
+        "wires": [
+            [
+                "cc28278b.f10758"
+            ]
+        ]
+    },
+    {
+        "id": "cc28278b.f10758",
+        "type": "http response",
+        "z": "7e3f401a.41846",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 734,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "6bad9a44.655424",
+        "type": "http request",
+        "z": "7e3f401a.41846",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "url": "",
+        "tls": "",
+        "x": 552,
+        "y": 721,
+        "wires": [
+            [
+                "2f250bcc.1d9fb4"
+            ]
+        ]
+    },
+    {
+        "id": "f5e53ae3.69f368",
+        "type": "function",
+        "z": "7e3f401a.41846",
+        "name": "Set CSV URL",
+        "func": "msg.url = JSON.parse(msg.payload).url;\nmsg.specName = JSON.parse(msg.payload).specName;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 380,
+        "y": 718,
+        "wires": [
+            [
+                "6bad9a44.655424"
+            ]
+        ]
+    },
+    {
+        "id": "9a1068b3.6cefb8",
+        "type": "comment",
+        "z": "7e3f401a.41846",
+        "name": "Cognos Dashboard Embedded Sample App REST API",
+        "info": "",
+        "x": 278.4615478515625,
+        "y": 145.38462829589844,
+        "wires": []
+    },
+    {
+        "id": "aa55e9a3.a9e2f8",
+        "type": "comment",
+        "z": "7e3f401a.41846",
+        "name": "DELETE /dashboards/:name : Delete a dashboard by name",
+        "info": "",
+        "x": 290,
+        "y": 546,
+        "wires": []
+    },
+    {
+        "id": "762c75f0.eb2ddc",
+        "type": "http in",
+        "z": "7e3f401a.41846",
+        "name": "",
+        "url": "/dashboards/:name",
+        "method": "delete",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 200,
+        "y": 586,
+        "wires": [
+            [
+                "2bc38d3f.c0fd02"
+            ]
+        ]
+    },
+    {
+        "id": "2bc38d3f.c0fd02",
+        "type": "function",
+        "z": "7e3f401a.41846",
+        "name": "Set _id to :name",
+        "func": "msg.payload = JSON.parse(msg.payload);\n\n//Overwrite ID with name from URL\nmsg.payload._id = msg.req.params.name;\n\n//A valid _rev needs to be passed as well in order to delete a doc (msg.payload._rev)\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 423,
+        "y": 586,
+        "wires": [
+            [
+                "d01d208a.6f181",
+                "2660dc1.3164e24"
+            ]
+        ]
+    },
+    {
+        "id": "d01d208a.6f181",
+        "type": "cloudant out",
+        "z": "7e3f401a.41846",
+        "name": "",
+        "cloudant": "4d2a7c31.ef3834",
+        "database": "dashboards",
+        "service": "_ext_",
+        "payonly": true,
+        "operation": "delete",
+        "x": 691,
+        "y": 562,
+        "wires": []
+    },
+    {
+        "id": "2660dc1.3164e24",
+        "type": "http response",
+        "z": "7e3f401a.41846",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 683,
+        "y": 610,
+        "wires": []
+    },
+    {
+        "id": "1658f3e7.00ddfc",
+        "type": "http in",
+        "z": "7e3f401a.41846",
+        "name": "",
+        "url": "/csvspec-from-cos",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 182,
+        "y": 894,
+        "wires": [
+            [
+                "b56a277c.4d8128"
+            ]
+        ]
+    },
+    {
+        "id": "9b834d11.e53de",
+        "type": "comment",
+        "z": "7e3f401a.41846",
+        "name": "POST /csvspec-from-cos : Generate a sample data source specification based on a CSV stored in IBM Cloud Object Storage",
+        "info": "",
+        "x": 493,
+        "y": 854,
+        "wires": []
+    },
+    {
+        "id": "5205908c.a332f",
+        "type": "csv",
+        "z": "7e3f401a.41846",
+        "name": "",
+        "sep": ",",
+        "hdrin": true,
+        "hdrout": "",
+        "multi": "mult",
+        "ret": "\\n",
+        "temp": "",
+        "x": 768,
+        "y": 950,
+        "wires": [
+            [
+                "407fcd2a.047aa4"
+            ]
+        ]
+    },
+    {
+        "id": "407fcd2a.047aa4",
+        "type": "function",
+        "z": "7e3f401a.41846",
+        "name": "Create Data Source Spec based on First Row of CSV",
+        "func": "//The following code is inspired heavily from data source spec helper code created by a fellow IBMer.\n\nvar cols = [];\n\n//Create a safe ID for the data spec\nvar specName = msg.specName;\n\n// Create a Spec ID safe for the module\n// change non alphanumeric to underscore\nsafeSpecId = specName.replace(new RegExp('[\\\\W]', 'g'), '_');\n// if the identifier doesn't start with a letter, prepend an 'i'\nif (!(safeSpecId.match(/^[a-z]/i))) safeSpecId = \"i\"+safeSpecId;\n\nfor (var col in msg.payload[0]){\n    \n    console.log(col);\n    console.log(typeof(msg.payload[0][col]));\n    \n    var colName = col;\n    var value = msg.payload[0][col];\n    \n    var colType = typeof(value);\n    \n    var retType = \"\";\n    var retUsage = \"\";\n    var retAggregate = \"\";\n    var retTaxonomy = \"\";\n    \n    //Determine if int or decimal\n    if (colType === \"number\"){\n        if (value.toString().indexOf(\".\") == -1){\n            //Integer\n            retType = \"BIGINT\";\n            retUsage = \"fact\";\n            retAggregate = \"total\";\n        } else {\n            //Floating point number\n            retType = \"DOUBLE\";\n            retUsage = \"fact\";\n            retAggregate = \"total\";\n        }\n    } else if (colType === \"string\"){\n        retType = \"NVARCHAR(256)\";\n        retUsage = \"attribute\";\n        retAggregate = \"countDistinct\";\n    } \n    \n    var colNameLower = colName.toLowerCase();\n        \n    // a few more tweaks to get a better match to the schema\n    if ((retUsage === \"fact\") && (colNameLower.indexOf(\"average\") > -1)) retAggregate=\"average\";\n    if ((retUsage === \"fact\") && (colNameLower.indexOf(\"avg\") > -1)) retAggregate=\"average\";\n    if ((retUsage === \"fact\") && (colNameLower.indexOf(\"percent\") > -1)) retAggregate=\"average\";\n    if ((retUsage === \"fact\") && (colNameLower.indexOf(\"%\") > -1)) retAggregate=\"average\";\n    \n    //Look at the col name and make taxonomy assumptions based on that\n    if ( colNameLower.indexOf(\"date\") > -1) {\n        retTaxonomy = \"cDate\";\n        //Assuming this is date data type\n        retType=\"DATE\";\n    }\n    else if ( colNameLower.indexOf(\"year\") > -1) retTaxonomy = \"cYear\";\n    else if ( colNameLower.indexOf(\"quarter\") > -1) retTaxonomy = \"cQuarter\";\n    else if ( colNameLower.indexOf(\"season\") > -1) retTaxonomy = \"cSeason\";\n    else if ( colNameLower.indexOf(\"month\") > -1) retTaxonomy = \"cMonth\";\n    else if ( colNameLower.indexOf(\"week\") > -1) retTaxonomy = \"cWeek\";\n    else if ( colNameLower.indexOf(\"day\") > -1) retTaxonomy = \"cDay\";\n    else if ( colNameLower.indexOf(\"hour\") > -1) retTaxonomy = \"cHour\";\n    else if ( colNameLower.indexOf(\"minute\") > -1) retTaxonomy = \"cMinute\";\n    else if ( colNameLower.indexOf(\"second\") > -1) retTaxonomy = \"cSecond\";\n    else if ( colNameLower.indexOf(\"subcontinent\") > -1) retTaxonomy = \"cSubcontinent\";\n    else if ( colNameLower.indexOf(\"continent\") > -1) retTaxonomy = \"cContinent\";\n    else if ( colNameLower.indexOf(\"country\") > -1) retTaxonomy = \"cCountry\";\n    else if ( colNameLower.indexOf(\"region\") > -1) retTaxonomy = \"cRegion\";\n    else if ( colNameLower.indexOf(\"prov\") > -1) retTaxonomy = \"cStateProvince\";\n    else if ( colNameLower.indexOf(\"state\") > -1) retTaxonomy = \"cStateProvince\";\n    else if ( colNameLower.indexOf(\"county\") > -1) retTaxonomy = \"cCounty\";\n    else if ( colNameLower.indexOf(\"city\") > -1) retTaxonomy = \"cCity\";\n    else if ( colNameLower.indexOf(\"zip\") > -1) retTaxonomy = \"cPostalCode\";\n    else if ( colNameLower.indexOf(\"postal\") > -1) retTaxonomy = \"cPostalCode\";\n    else if ( colNameLower.indexOf(\"address\") > -1) retTaxonomy = \"cStreetAddress\";\n    else if ( colNameLower.indexOf(\"street\") > -1) retTaxonomy = \"cStreetAddress\";\n    else if ( colNameLower.indexOf(\"position\") > -1) retTaxonomy = \"cPosition\";\n    else if ( colNameLower.indexOf(\"latitude\") > -1) retTaxonomy = \"cLatitude\";\n    else if ( colNameLower.indexOf(\"longitude\") > -1) retTaxonomy = \"cLongitude\";\n    else retTaxonomy = \"cNone\";\n    \n    //var retCol = {};\n    \n    // Make colname safe for the data spec column name\n    // change non alphanumeric to underscore\n    safeColName = colName.replace(new RegExp('[\\\\W]', 'g'), '_');\n    // if the identifier doesn't start with a letter, prepend an 'i'\n    if (!(safeColName.match(/^[a-z]/i))) safeColName = \"i\"+safeColName;\n    \n    var retCol = {\n        \"name\": safeColName,\n        \"datatype\":retType,\n        \"nullable\":true,\n        \"description\":colName,\n        \"label\":colName,\n        \"usage\": retUsage,\n        \"regularAggregate\":retAggregate\n    };\n    \n    // apply the taxonomy if one was identified. geo/time fields should be treated as attributes regardless of datatype\n    if (!(retTaxonomy === \"cNone\")){\n        retCol[\"taxonomyFamily\"] = retTaxonomy;\n        retCol[\"usage\"] = \"attribute\";\n        retCol[\"regularAggregate\"] = \"countDistinct\";\n    }\n\n    cols.push(retCol);\n}\n\nconsole.log(cols);\n\nvar csvSpec = { \n    \"xsd\": \"https://ibm.com/daas/module/1.0/module.xsd\", \n    \"source\": { \n        \"id\": safeSpecId, \n        \"srcUrl\": { \n            \"sourceUrl\": msg.url, \n            \"mimeType\": \"text/csv\", \n            \"property\": [ \n                { \n                    \"name\": \"separator\", \n                    \"value\": \", \" \n                    \n                }, \n                { \n                    \"name\": \"ColumnNamesLine\", \n                    \"value\": \"true\" \n                },\n                {\n                  \"name\": \"headers\",\n                  \"value\": [\n                    {\n                      \"name\": \"Authorization\",\n                      \"value\": \"Bearer \" + msg.cosAccessToken\n                    }\n                  ]\n                }\n            ] \n        } \n    }, \n    \"table\": { \n        \"name\": specName, \n        \"description\": \"description of the table for visual hints \", \n        \"column\": cols \n    }, \n    \"label\": specName, \n    \"identifier\": safeSpecId \n};\n\nmsg.payload = csvSpec;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 379,
+        "y": 1020,
+        "wires": [
+            [
+                "e85c6409.2d16c8"
+            ]
+        ]
+    },
+    {
+        "id": "e85c6409.2d16c8",
+        "type": "http response",
+        "z": "7e3f401a.41846",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 687,
+        "y": 1019,
+        "wires": []
+    },
+    {
+        "id": "5b499060.ac573",
+        "type": "http request",
+        "z": "7e3f401a.41846",
+        "name": "Obtain COS Access Token",
+        "method": "POST",
+        "ret": "txt",
+        "url": "https://iam.bluemix.net/oidc/token",
+        "tls": "",
+        "x": 641,
+        "y": 893,
+        "wires": [
+            [
+                "cdba670f.a72958"
+            ]
+        ]
+    },
+    {
+        "id": "b56a277c.4d8128",
+        "type": "function",
+        "z": "7e3f401a.41846",
+        "name": "Set COS API Key",
+        "func": "var cosApiKey = JSON.parse(msg.payload).cosApiKey;\n\n//Copy portions of the request we'd like to retain for the second HTTP request\nmsg.cosEndpoint = JSON.parse(msg.payload).cosEndpoint;\nmsg.cosBucketName = JSON.parse(msg.payload).cosBucketName;\nmsg.cosObjectKey = JSON.parse(msg.payload).cosObjectKey;\nmsg.specName = JSON.parse(msg.payload).specName;\n\nmsg.payload = {};\nmsg.payload.apikey = cosApiKey;\nmsg.payload.response_type = \"cloud_iam\";\nmsg.payload.grant_type = \"urn:ibm:params:oauth:grant-type:apikey\";\nmsg.headers = {};\nmsg.headers[\"content-type\"] = \"application/x-www-form-urlencoded\";\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 407,
+        "y": 894,
+        "wires": [
+            [
+                "5b499060.ac573"
+            ]
+        ]
+    },
+    {
+        "id": "95cabada.e9de78",
+        "type": "http request",
+        "z": "7e3f401a.41846",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "url": "",
+        "x": 593,
+        "y": 952,
+        "wires": [
+            [
+                "5205908c.a332f"
+            ]
+        ]
+    },
+    {
+        "id": "cdba670f.a72958",
+        "type": "function",
+        "z": "7e3f401a.41846",
+        "name": "Set Properties to Download CSV from COS",
+        "func": "var cosAccessToken = JSON.parse(msg.payload).access_token;\nmsg.cosAccessToken = cosAccessToken;\n\nmsg.url = \"https://\" + msg.cosEndpoint + \"/\" + msg.cosBucketName + \"/\" + msg.cosObjectKey;\n\nmsg.headers = {};\nmsg.headers[\"Authorization\"] = \"Bearer \" + cosAccessToken;\n\nmsg.payload = {};\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 305,
+        "y": 953,
+        "wires": [
+            [
+                "95cabada.e9de78"
+            ]
+        ]
+    }
 ]
