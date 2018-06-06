@@ -21,26 +21,44 @@ var loadDashboards = function(clientId){
             //Clear current list (if any) before loading docs
             ul.innerHTML = "";
 
+            if (resp.length === 0)
+                ul.innerHTML = "<i>You haven't saved any dashboards yet.</i>";
+
             resp.forEach(function(dashboard){
-                var li = document.createElement("li");
-                li.appendChild(document.createTextNode(dashboard._id));
-                li.onclick = openDashboard;
-                li.classList.add("saved-dashboard");
+                
+                //List item representing a dashboard
+                var li = document.createElement("div");
 
                 //Keep the id and rev for later as data attributes
                 li.dataset.id = dashboard._id;
                 li.dataset.rev = dashboard._rev;
+                
+                li.classList.add("saved-dashboard-container");
 
-                console.log(dashboard);
+                //First span onclick is loading the dashboard. Second is deleting.
+                var spanLoadDashboard = document.createElement("span");
+                var spanDeleteDashboard = document.createElement("span");
 
+                spanLoadDashboard.appendChild(document.createTextNode(dashboard._id));
+                spanLoadDashboard.onclick = openDashboard;
+                spanLoadDashboard.classList.add("saved-dashboard-link");
+
+                //console.log(dashboard);
                 //Remove Cloudant metadata "_id" and "_rev" from dashboard spec
                 var dashboardSpec = Object.assign({},dashboard); 
                 delete dashboardSpec._id;
                 delete dashboardSpec._rev;
 
-                console.log(dashboardSpec);
+                //console.log(dashboardSpec);
+                spanLoadDashboard.dataset.dashboardSpec = JSON.stringify(dashboardSpec);
 
-                li.dataset.dashboardSpec = JSON.stringify(dashboardSpec);
+                //Delete dashboard span is represented by an " X"
+                spanDeleteDashboard.appendChild(document.createTextNode(" X"));
+                spanDeleteDashboard.onclick = deleteDashboard;
+                spanDeleteDashboard.classList.add("delete-dashboard-button");
+
+                li.appendChild(spanDeleteDashboard);
+                li.appendChild(spanLoadDashboard);
 
                 ul.appendChild(li);
             })
@@ -52,17 +70,15 @@ var loadDashboards = function(clientId){
 //Create a Cognos Dashboard Embedded Session
 var createSession = function(){
 
-    //Local:
     const createSessionUrl = "/session";
-    //Cloud:
-    //const createSessionUrl = "/session-ibmcloud"
 
     var clientId = document.getElementById('client-id-input').value;
     var clientSecret = document.getElementById('client-secret-input').value;
+    var webDomain = window.location.href;
 
     fetch(createSessionUrl, {
         method : "POST",
-        body: JSON.stringify({clientId: clientId, clientSecret: clientSecret})
+        body: JSON.stringify({clientId: clientId, clientSecret: clientSecret, webDomain: webDomain})
     }).then(
         response => response.json() // .json(), etc.
         // same as function(response) {return response.text();}
@@ -130,8 +146,8 @@ var createDashboard = function() {
 //Open an existing dashboard from the dashboard list
 var openDashboard = function() {
     //Get _id, _rev, and _dashboardSpec associated with the dashboard that was clicked on to be loaded
-    var _id = this.dataset.id;
-    var _rev = this.dataset.rev;
+    var _id = this.parentElement.dataset.id;
+    var _rev = this.parentElement.dataset.rev;
     var dashboardSpec = JSON.parse(this.dataset.dashboardSpec);
 
     //Add _id and _rev as data attributes of the dashboard HTML element to use when saving back to Cloudant
@@ -212,8 +228,83 @@ var saveDashboard = function() {
     );
 }
 
-//Generate a sample CSV data source specification based on a CSV source URL
+//Delete dashboard stored in Cloudant
+var deleteDashboard = function(){
+
+
+    var deleteDashboardUrl = "/dashboards"
+
+    var _id = this.parentElement.dataset.id;
+    var _rev = this.parentElement.dataset.rev;
+    
+    console.log("Deleting dashboard: " + _id);
+
+    var result = confirm("Are you sure you want to delete " + _id + " from the database?");
+
+    if (result) {
+
+        deleteDashboardUrl += "/" + _id;
+
+        fetch(deleteDashboardUrl, {
+            method : "DELETE",
+            body: JSON.stringify({"_id":_id,"_rev":_rev})
+        }).then(
+            response => response.json() // .json(), etc.
+            // same as function(response) {return response.text();}
+        ).then(
+            function(resp){
+                //console.log(resp);
+                console.log("Dashboard deleted. Waiting 2 seconds, then refreshing dashboard list from Cloudant.");
+                
+                var clientId = document.getElementById("client-id-data-span").dataset.clientId;
+                setTimeout(function(){loadDashboards(clientId);},2000);
+            }
+
+        );
+
+
+        var saveDashboardUrl = "/dashboards"
+
+        var dashboardName = encodeURI(document.getElementById('dashboard-name-input').value);
+
+        if (dashboardName.length === 0){
+            console.error("No dashboard name provided.")
+            return;
+        } else {
+            saveDashboardUrl += "/" + dashboardName;
+        }
+
+        console.log(saveDashboardUrl);
+
+    }
+
+}
+
 var generateCSVSpec = function() {
+
+    //Call the correct CSV spec generation endpoint based on the load data mode selected
+
+    var loadDataModes = document.getElementsByName('load-data-mode');
+    var loadDataModeValue;
+
+    for (var i=0;i<loadDataModes.length;i++){
+        if (loadDataModes[i].checked){
+            loadDataModeValue = loadDataModes[i].value;
+            break;
+        }
+    }
+
+    if (loadDataModeValue === "csv-url"){
+        generateCSVSpecFromCSVUrl();
+    } else if (loadDataModeValue === "cos") {
+        generateCSVSpecFromCOS();
+    }
+
+};
+
+
+//Generate a sample CSV data source specification based on a CSV source URL
+var generateCSVSpecFromCSVUrl = function() {
 
     const loadCSVSpecUrl = "/csvspec";
 
@@ -240,6 +331,45 @@ var generateCSVSpec = function() {
         }
     );
 
+};
+
+//Generate a sample CSV data source specification based on a CSV stored in IBM Cloud Object Storage
+var generateCSVSpecFromCOS = function() {
+
+    const loadCSVSpecUrl = "/csvspec-from-cos";
+
+    var cosApiKey = document.getElementById('cos-api-key-input').value;
+    var cosEndpoint = document.getElementById('cos-endpoint-input').value;
+    var cosBucketName = document.getElementById('cos-bucket-name-input').value;
+    var cosObjectKey = document.getElementById('cos-object-key-input').value;
+
+    var specName = document.getElementById('data-spec-name-input').value;
+
+    fetch(loadCSVSpecUrl, {
+        method : "POST",
+        body: JSON.stringify({
+            cosApiKey: cosApiKey, 
+            cosEndpoint: cosEndpoint,
+            cosBucketName: cosBucketName,
+            cosObjectKey: cosObjectKey,
+            specName: specName
+        })
+    }).then(
+        response => response.json() // .json(), etc.
+        // same as function(response) {return response.text();}
+    ).then(
+        function(resp){
+            console.log(resp);
+
+            csvSpecCodeArea = document.getElementById("csv-spec-code-area");
+            csvSpecCodeArea.value = JSON.stringify(resp,undefined,2);
+
+            //Fit height of textarea to new text
+            csvSpecCodeArea.style.height = "";
+            csvSpecCodeArea.style.height = csvSpecCodeArea.scrollHeight + 3 + "px";
+
+        }
+    );
 
 };
 
@@ -295,6 +425,33 @@ var setDashboardMode = function() {
         dashboardAPI.setMode(dashboardAPI.MODES.VIEW);
     } else if (dashboardModeValue === "edit-group"){
         dashboardAPI.setMode(dashboardAPI.MODES.EDIT_GROUP);
+    }
+};
+
+//Set data mode to CSV from URL or from IBM Cloud Object Storage
+var setLoadDataMode = function() {
+
+    var loadDataModes = document.getElementsByName('load-data-mode');
+    var loadDataModeValue;
+
+    for (var i=0;i<loadDataModes.length;i++){
+        if (loadDataModes[i].checked){
+            loadDataModeValue = loadDataModes[i].value;
+            break;
+        }
+    }
+
+    //Divs to show and hide based on the load data mode selected
+    var urlDiv = document.getElementById("csv-from-url-inputs");
+    var cosDiv = document.getElementById("csv-from-cos-inputs");
+
+    if (loadDataModeValue === "csv-url"){
+        urlDiv.style.display = "block";
+        cosDiv.style.display = "none";
+
+    } else if (loadDataModeValue === "cos") {
+        urlDiv.style.display = "none";
+        cosDiv.style.display = "block";
     }
 };
 

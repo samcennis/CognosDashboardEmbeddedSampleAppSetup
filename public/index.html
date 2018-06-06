@@ -8,9 +8,9 @@
             <h1>Cognos Dashboard Embedded Sample Application</h1>
             <section>
                 <h3>Step 1. Enter your Cognos Dashboard Embedded service connection details.</h3>
-                <p>You will first need a <a href="https://console.bluemix.net/catalog/services/ibm-cognos-dashboard-embedded">Cognos Dashboard Embedded</a> service on IBM Cloud. Once created, obtain your Client ID and Client Secret from "Service credentials", and enter them below.</p>
+                <p>You will first need to create a <a href="https://console.bluemix.net/catalog/services/ibm-cognos-dashboard-embedded">Cognos Dashboard Embedded</a> service on IBM Cloud. Once created, obtain your Client ID and Client Secret from "Service credentials", and enter them below.</p>
                 Client ID: <input style="width:100%;" id="client-id-input" type="text" value=""/>
-                Client Secret: <input style="width:100%;" id="client-secret-input" type="text" value=""/>
+                Client Secret: <input style="width:100%;" id="client-secret-input" type="text" value=""/> 
             </section>
             <section>
                 <h3>Step 2. Create a Session</h3>
@@ -20,7 +20,7 @@
                     <span>Session Code: </span>
                     <span id="session-code-span" data-session-code="">TBD</span>
                     <span id="client-id-data-span" data-client-id: ""></span>
-                </div>
+                </div> 
             </section>
             <section>
                 <h3>Step 3. Initialize API Framework</h3>
@@ -28,40 +28,74 @@
                 <button id="intialize-api-button" onclick="initializeAPIFramework()">Initialize API Framework</button>
                 <div>
                     <span id="initialize-api-result-span"></span>
-                </div>
+                </div> 
             </section>
             <section>
                 <h3>Step 4. Create New or Load Existing Dashboard</h3>
                 <h4>4a. Create a New Dashboard</h4>
-                <p>Press the following button to create a new dashboard. Press "OK" after choosing a template.</p>
+                <p>Press the following button to create a new dashboard. Press "OK" after choosing a layout template.</p>
                 <button onclick="createDashboard()">Create</button>
                 <h4>4b. Open an existing Dashboard</h4>
-                <p>Select a previously created dashboard stored in the Cloudant database in order to open it. Any previous dashboards you've created with this Cognos Dashboard Embedded service and saved (Step 6 below) will appear here.</p>
+                <p>Select a previously saved dashboard in order to open it. This sample app persists dashboards as JSON documents in a Cloudant NoSQL database. Any previous dashboards you've created and saved (Step 6 below) using your Cognos Dashboard Embedded service Client ID will appear here.</p>
                 <p>Saved dashboards:</p>
-                <ul id="saved-dashboards-list">
-                </ul>
-            </section>
-            <section>
-                <h3>Step 5. Add a Data Source</h3>
-                <p>This sample app includes a utility to assist with building data source specifications (JSON format) from a CSV URL.
-                    The first row of the CSV will be analyzed. Based on column names and data values, a "best guess" of the column's data type,
-                    usage, default aggregation, and taxonomy will be inferred. Make sure to take a look at what is generated and just use this
-                    utility as a starting point. Details on creating data source specifications for Cognos Dashboard Embedded
-                    <a href="https://console.bluemix.net/docs/services/cognos-dashboard-embedded/working_with_datasources.html#working-with-data-sources">
-                        can be found here</a>.
-                <div>
-                    <p>Link to CSV file:</p>
-                    <input style="width:100%;" id="csv-url-input" type="url" value="https://raw.githubusercontent.com/samcennis/CognosDashboardEmbeddedSampleAppSetup/master/dataSetDemo.csv"/>
-                    <p>Provide a name for the data source:</p>
-                    <input style="width:100%;" id="data-spec-name-input" type="text" value="New Data Source"/>
-                    <button id="csv-load-button" onclick="generateCSVSpec()">Generate Data Source Spec From CSV URL</button>
-                    <p>Data Source Spec:</p>
-                    <textarea id="csv-spec-code-area" contenteditable="true" style="width:100%;" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
-                    <button id="add-data-source" onclick="addDataSource()">Add a Data Source Based on this Spec to Dashboard</button>
+                <div id="saved-dashboards-list">
                 </div>
             </section>
             <section>
-                <h3>Step 6. Save Dashboard</h3>
+                <h3>Step 5. Add a Data Source</h3>
+                <p>This sample app has a helpeful utility to assist with building data source specifications (JSON format) for Cognos Dashboard Embedded from a CSV URL. 
+                    The first row of the CSV will be analyzed. Based on column names and data values, a "best guess" of the column's data type, 
+                    usage, default aggregation, and taxonomy will be inferred. Make sure to just use this 
+                    utility as a starting point, and make modifications to the data source specification as needed. Details on creating data source specifications for Cognos Dashboard Embedded 
+                    <a href="https://console.bluemix.net/docs/services/cognos-dashboard-embedded/working_with_datasources.html#working-with-data-sources">
+                        can be found here</a>.
+                </p>
+                <form>
+                    <p>I want to load my data from:</p>
+                    <div>
+                        <input type="radio" id="csv-url-choice"
+                        name="load-data-mode" value="csv-url" onclick="setLoadDataMode()" checked>
+                        <label for="csv-url-choice">URL (CSV file)</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="cos-choice"
+                        name="load-data-mode" value="cos" onclick="setLoadDataMode()">
+                        <label for="csv-url-choice">IBM Cloud Object Storage (CSV file)</label>
+                    </div>
+                </form>
+                <div id="csv-from-url-inputs">
+                    <p>Link to CSV file:</p>
+                    <input style="width:100%;" id="csv-url-input" type="url" value="https://raw.githubusercontent.com/samcennis/CognosDashboardEmbeddedSampleAppSetup/master/dataSetDemo.csv"/>
+                </div>
+                <div id="csv-from-cos-inputs" style="display:none;">
+                    <p>Provision <a href="https://console.bluemix.net/catalog/services/cloud-object-storage">IBM Cloud Object Storage</a> from the IBM Cloud catalog, then persist your CSV file in a bucket. This app will obtain a COS access token with your API key, then add an "Authorization" header to the data source specification so Cognos Dashboard Embedded is able to access your CSV file.</p>
+                    <p>COS API Key:</p>
+                    <input style="width:100%;" id="cos-api-key-input" type="text" value=""/>
+                    <p>COS Endpoint:</p>
+                    <input style="width:100%;" id="cos-endpoint-input" type="text" value="s3-api.us-geo.objectstorage.softlayer.net"/>
+                    <p>COS Bucket name:</p>
+                    <input style="width:100%;" id="cos-bucket-name-input" type="text" placeholder="cognos-dashboard-embedded-bucket"/>
+                    <p>COS Object key (CSV file):</p>
+                    <input style="width:100%;" id="cos-object-key-input" type="text" placeholder="dataSetDemo.csv"/>
+                </div>
+                <div>
+                    <p>Provide a name for the data source:</p>
+                    <input style="width:100%;" id="data-spec-name-input" type="text" value="New Data Source"/>
+                    <button id="csv-load-button" onclick="generateCSVSpec()">Generate Data Source Spec From CSV</button>
+                    <p><i>Please wait up to 15 seconds for the data source spec to generate and populate the text area below.</i></p>
+                </div>
+                <div>
+                    <p>Data Source Spec:</p>
+                    <textarea id="csv-spec-code-area" contenteditable="true" style="width:100%;" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
+                    <button id="add-data-source" onclick="addDataSource()">Use this Spec to Add a Data Source to Current Dashboard</button>
+                </div>
+            </section>
+            <section>
+                <h3>Step 6. Build Your Dashboard</h3>
+                <p>Interact with the canvas to create your dashboard. Try dragging a column from the Sources pane onto the canvas in order to create your first visualization. For example, if you're using the sample dataset, drag in "Quantity" to see the total quantity of products sold. Next, drag in "Product line" onto the same visualization in order to see a column chart breaking down quantity sold by product line. While building your dashboard, you can use the buttons in the "Additional Utilities" section below to undo, redo, and access the properties pane.</p>
+            </section>
+            <section>
+                <h3>Step 7. Save Dashboard</h3>
                 <p>Generate a dashboard spec based on the current dashboard and save it to Cloudant. Provide the dashboard with a unique name below. Non-unique names will overwrite previous saved dashboards in the database.</p>
                 <input style="width:100%;" id="dashboard-name-input" type="text" />
                 <button id="save-dashboard-button" onclick="saveDashboard()">Save Current Dashboard</button>
@@ -90,6 +124,8 @@
         </div>
         <div id="right-col" class="column right">
             <button id="toggle-left-column-button" style="float:left;" onclick="toggleLeftColumn()"><</button>
+            <img id="sample-company-logo" style="display:none;height:30px;padding-left:20px;padding-right:20px;padding-top:5px;" src="">
+            <h3 style="display:inline;display:none;">Sample Company Name</h3>
             <div id="dashboard-container"></div>
         </div>
     </body>
@@ -101,7 +137,7 @@
         }
         .column {
             float: left;
-
+            
         }
 
         .left {
@@ -120,10 +156,22 @@
             overflow: scroll;
         }
 
-        .saved-dashboard {
+        .saved-dashboard-container {
+            margin-top: 5px;
+        }
+
+        .saved-dashboard-link {
             text-decoration: underline;
             cursor: pointer;
-            margin: 8px;
         }
+
+        .delete-dashboard-button {
+            color: darkred;
+            cursor: pointer;
+            font-size: 10px;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
     </style>
 </html>
