@@ -12,7 +12,7 @@ Create an instance of IBM Cognos Dashboard Embedded in your IBM Cloud account he
 
 Select the "Lite" plan and then "Create". After creating the service, select "Service Credentials" from the left menu, then "New Credential" to generate a new set of credentials. Name the credentials whatever you wish. Select "View credentials", and copy the "client_id" and "client_secret" values.
 
-Now that your have our Cognos Dashboard Embedded service credentials, you can [try out this app first](https://cognos-dashboard-embedded-sample-app.mybluemix.net/) before [setting it up yourself with the instructions below](#deploy-the-node-red-starter-application).
+Now that your have our Cognos Dashboard Embedded service credentials, you can [try out this app first](https://cognos-dashboard-embedded-sample-app.mybluemix.net/) before [setting it up yourself with the instructions below](#now-set-the-app-up-yourself-in-your-ibm-cloud-account).
 
 **Try this app out with the live version here:** https://cognos-dashboard-embedded-sample-app.mybluemix.net/
 
@@ -20,9 +20,9 @@ Keep in mind that dashboards you save at this link are stored with full visibili
 
 See the [Using this application section](#using-this-application) if you need assistance while walking through the app.
 
-## Now set the app up yourself in your own IBM Cloud account. 
+## Now set the app up yourself in your IBM Cloud account 
 
-### Deploy the Node-RED Starter Application.
+### Deploy the Node-RED Starter Application
 
 From the IBM Cloud catalog, deploy the Node-RED starter application to your IBM Cloud account. This will set up and deploy a Node-RED application the leverages Cloudant (NoSQL database) to persist Node-RED "flows". With a couple of tweaks, this starter application will become the sample application that leverages Cognos Dashboard Embedded. Node-RED is an open source, visual programming tool originally created by IBM to quickly create Node.js applications with little to no programming involved. In this application, Node-RED is used to define a simple RESTful API backend to interact with both Cognos Dashboard Embedded and Cloudant. 
 
