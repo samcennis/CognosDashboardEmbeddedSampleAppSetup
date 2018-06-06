@@ -12,13 +12,13 @@ Create an instance of IBM Cognos Dashboard Embedded in your IBM Cloud account he
 
 Select the "Lite" plan and then "Create". After creating the service, select "Service Credentials" from the left menu, then "New Credential" to generate a new set of credentials. Name the credentials whatever you wish. Select "View credentials", and copy the "client_id" and "client_secret" values.
 
-Use these values when trying out the app here: https://cognos-dashboard-embedded-sample-app.mybluemix.net/
+Now that you've created a Cognos Dashboard Embedded service, use it with this app here (before setting it up yourself): https://cognos-dashboard-embedded-sample-app.mybluemix.net/
 
-Follow the steps in the left sidebar to create a session, create a new dashboard, add a data source, and build some visualizations. Skip to the section "Using this application" for a complete walk-through.
+Keep in mind that dashboards you save at this link are stored with full visibility in my own Cloudant database... so don't create dashboards or use data containing sensitive/private information!
 
-Keep in mind that dashboards you save in this version of the app are stored with full visibility in my own Cloudant database... so don't create dashboards or use data containing sensitive/private information!
+See the [Using this application section](#using-this-application) if you need assistance while walking through the app.
 
-## Now set this app up yourself in your own IBM Cloud account. 
+## Now set the app up yourself in your own IBM Cloud account. 
 
 ### Deploy the Node-RED Starter Application.
 
@@ -56,17 +56,13 @@ Select the sandwich menu in the top right to get a drop down menu. Select Import
 
 Copy the text contained within the [flows.json](/flows.json) file and paste it into the “Paste nodes here” section. Selet "current flow". Then click Import. Click to drop the imported nodes on the canvas. 
 
-This is the complete RESTful API for the application. With just a couple of customizations, our backend will be all set up.
-
-#### Set the domain of your app when creating a Cognos Dashboard Embedded session
-
-In the POST /session flow, double-click "Set MSG payload" to edit the JavaScript behind the node. Now, edit line 7 and replace 'http://localhost:1880' with 'https://_your-app-name_.mybluemix.net'. This tells Cognos Dashboard Embedded which domain it should expect to interact with this during a particular session.
+This is the complete RESTful API backend for the application.
 
 #### Verify correct connection to your Cloudant database in the two Cloudant nodes
 
 In the GET /dashboards flow, double-click on the "dashboards" node to edit the Cloudant connection details. Under Service, insure that _your-app-name_-cloudantNoSQLDB is selected. This was the Cloudant instance that was created with the Node-RED Starter application to store the Node-RED flows. It is also where we will persist dashboards in between Cognos Dashboard Embedded sessions, in the "dashboards" database. Ensure the same Cloudant instance is specified in the "dashboards" node in the PUT /dashboards/:name flow.
 
-Now select "Deploy". Your REST API backend is now completely set up. Awesome!
+Now select "Deploy". Your REST API backend is now completely set up and running. Awesome!
 
 ### Configure the Cloudant NoSQL database service to persist and load dashboards
 
@@ -96,11 +92,9 @@ Then, replace the current /public directory (within the /your-app-name directory
 
 After replacing the /public directory, run `cf push your-app-name` one more time to re-deploy the app to IBM Cloud. 
 
-Your app is all set up!
+Your app is all set up! Go to https://_your-app-name_.mybluemix.net to view your personal version of this application. 
 
 ## Using this application
-
-Go to https:_your-app-name_.mybluemix.net to visit the sample application. 
 
 1. Plug in the Client ID and Client Secret you gathered from your Cognos Dashboard Embedded service.
 
@@ -110,18 +104,20 @@ Go to https:_your-app-name_.mybluemix.net to visit the sample application.
 
 4. Select "Create" to create a new dashboard. You'll be prompted to select a layout. Select the basic 2x2 layout option. (The 9th layout listed). Select "OK" to enter the dashboard building view.
 
-5. Select "Generate Data Source Spec From CSV URL" to leverage a utility contained within this sample application to assist with building data source specifications (JSON format) for Cognos Dashboard Embedded.
+5. Next we will add a data source. 
 
-By default, the app will use a link to the CSV file hosted on my GitHub account, but you can replace it with your own CSV if your like. This sample CSV file represents sales data for a retailer that sells outdoor equipment.
+By default, the app will use a link to a sample CSV file hosted on my GitHub account (dataSetSample.csv[/dataSetDemo.csv]), but you can replace it with your own CSV if you like. This sample CSV file represents sales data for a retailer that sells outdoor equipment. You'll see an option to use a CSV stored in IBM Cloud Object Storage as well, for this example we will not use that.
+
+Select "Generate Data Source Spec From CSV URL" to leverage a utility contained within this sample application to assist with building data source specifications (JSON format) for Cognos Dashboard Embedded.
 
 The utility built into this sample app will take a look at the first row of the CSV. Based on column names and data values, a best guess of the column's data type, usage, default aggregation, and taxonomy will be inferred. Make sure to take a look at what is generated and just use this utility as a starting point. Details on creating data source specifications for Cognos Dashboard Embedded can be found here:
 https://console.bluemix.net/docs/services/cognos-dashboard-embedded/working_with_datasources.html#working-with-data-sources
 
-Wait for 5 - 10 seconds and the text area underneath "Data Source Spec:" will populate with the generated data source spec. Especially when using your own CSV files, you'll want to make sure that column attributes are defined correctly, since this sample application's tool will not infer correctly every time. It is a helpful starting point so we do not need to start from scratch each time.
+Wait for up to 15 seconds and the text area underneath "Data Source Spec:" will populate with the generated data source spec. Especially when using your own CSV files, you'll want to make sure that column attributes are defined correctly, since this sample application's tool will not infer correctly every time. It is a helpful starting point so we do not need to start from scratch each time.
 
 Now select "Add a Data Source Based on this Spec to Dashboard" to add it to the dashboard.
 
-6. Build your dashboard. You'll see that "New Data Source" has been added as a source within your dashboard building view. Click on this source and expand the table to see column names available to leverage in your visualization creation. For example, select "Revenue" and drag it into a quarter of the dashboard. You'll see the total revenue across the full dataset. Now drag "Product Line" into the same quarter of the dashboard. Cognos will intelligently create a column chart based on both Product Line and Revenue and update the visualization appopriately.
+6. Build your dashboard. You'll see that "New Data Source" has been added as a source within your dashboard building view. Click on this source and expand the table to see column names available to leverage in your visualization creation. For example, select "Quantity" and drag it into a quarter of the 2x2 layout dashboard. You'll see the total revenue across the full dataset. Now drag "Product line" into the same quarter of the dashboard. Cognos will use its "smarts" to create a column chart based on the column types of Product line and Revenue and update the visualization appopriately.
 
 Drag "Quantity" into another corner of the dashboard to see the total quantity sold across all data. Now click on the column in the column chart representing Camping Equipment. You'll see that the quantity decreases, because the dashboard filters according to this selection.
 
