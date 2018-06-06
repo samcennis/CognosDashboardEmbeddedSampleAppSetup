@@ -12,9 +12,9 @@ Create an instance of IBM Cognos Dashboard Embedded in your IBM Cloud account he
 
 Select the "Lite" plan and then "Create". After creating the service, select "Service Credentials" from the left menu, then "New Credential" to generate a new set of credentials. Name the credentials whatever you wish. Select "View credentials", and copy the "client_id" and "client_secret" values.
 
-Now that you've created a Cognos Dashboard Embedded service, use it with this app here (before setting it up yourself): https://cognos-dashboard-embedded-sample-app.mybluemix.net/
+Now that your have our Cognos Dashboard Embedded service credentials, you can try out this app here (before setting it up with the instructions below): https://cognos-dashboard-embedded-sample-app.mybluemix.net/
 
-Keep in mind that dashboards you save at this link are stored with full visibility in my own Cloudant database... so don't create dashboards or use data containing sensitive/private information!
+Keep in mind that dashboards you save at this link are stored with full visibility in my own Cloudant database... so avoid creating dashboards or using data that containes sensitive/private information.
 
 See the [Using this application section](#using-this-application) if you need assistance while walking through the app.
 
@@ -115,10 +115,10 @@ https://console.bluemix.net/docs/services/cognos-dashboard-embedded/working_with
 
 Wait for up to 15 seconds and the text area underneath "Data Source Spec:" will populate with the generated data source spec. Especially when using your own CSV files, you'll want to make sure that column attributes are defined correctly, since this sample application's tool will not infer correctly every time. It is a helpful starting point so we do not need to start from scratch each time.
 
-Now select "Add a Data Source Based on this Spec to Dashboard" to add it to the dashboard.
+Now select "Add a Data Source Based on this Spec to Dashboard" to add it to the dashboard. The data source spec will be stored along with the dashboard.
 
 6. Build your dashboard. You'll see that "New Data Source" has been added as a source within your dashboard building view. Click on this source and expand the table to see column names available to leverage in your visualization creation. For example, select "Quantity" and drag it into a quarter of the 2x2 layout dashboard. You'll see the total revenue across the full dataset. Now drag "Product line" into the same quarter of the dashboard. Cognos will use its "smarts" to create a column chart based on the column types of Product line and Revenue and update the visualization appopriately.
 
 Drag "Quantity" into another corner of the dashboard to see the total quantity sold across all data. Now click on the column in the column chart representing Camping Equipment. You'll see that the quantity decreases, because the dashboard filters according to this selection.
 
-7. Select "Save Current Dashboard" to save your dashboard. This is done by getting the dashboard specification of the currently opened dashboard as a JSON document and sending it to Cloudant. Your Cognos Dashboard Embedded Client ID will be added to this so the next time you start a session with that Client ID, previously dashboards you've saved will be loaded as options to open.
+7. Select "Save Current Dashboard" to save your dashboard. This is done by getting the dashboard specification of the currently opened dashboard as a JSON document and sending it to Cloudant. Data sources you've added are saved within this JSON document as well. Your Cognos Dashboard Embedded Client ID will be added to the document, so the next time you start a session with that Client ID, previously dashboards you've saved will be loaded.
