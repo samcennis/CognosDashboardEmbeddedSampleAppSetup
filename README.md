@@ -112,19 +112,19 @@ Your app is all set up! Go to https://_your-app-name_.mybluemix.net to view your
 
 5. Next we will add a data source. 
 
-⋅⋅⋅By default, the app will use a link to a sample CSV file hosted on my GitHub account (dataSetSample.csv[/dataSetDemo.csv]), but you can replace it with your own CSV if you like. This sample CSV file represents sales data for a retailer that sells outdoor equipment. You'll see an option to use a CSV stored in IBM Cloud Object Storage as well, for this example we will not use that.
+   By default, the app will use a link to a sample CSV file hosted on my GitHub account (dataSetSample.csv[/dataSetDemo.csv]), but you can replace it with your own CSV if you like. This sample CSV file represents sales data for a retailer that sells outdoor equipment. You'll see an option to use a CSV stored in IBM Cloud Object Storage as well, for this example we will not use that.
 
-⋅⋅⋅Select "Generate Data Source Spec From CSV URL" to leverage a utility contained within this sample application to assist with building data source specifications (JSON format) for Cognos Dashboard Embedded.
+   Select "Generate Data Source Spec From CSV URL" to leverage a utility contained within this sample application to assist with building data source specifications (JSON format) for Cognos Dashboard Embedded.
 
-⋅⋅⋅The utility built into this sample app will take a look at the first row of the CSV. Based on column names and data values, a best guess of the column's data type, usage, default aggregation, and taxonomy will be inferred. Make sure to take a look at what is generated and just use this utility as a starting point. Details on creating data source specifications for Cognos Dashboard Embedded can be found here:
+   The utility built into this sample app will take a look at the first row of the CSV. Based on column names and data values, a best guess of the column's data type, usage, default aggregation, and taxonomy will be inferred. Make sure to take a look at what is generated and just use this utility as a starting point. Details on creating data source specifications for Cognos Dashboard Embedded can be found here:
 https://console.bluemix.net/docs/services/cognos-dashboard-embedded/working_with_datasources.html#working-with-data-sources
 
-⋅⋅⋅Wait for up to 15 seconds and the text area underneath "Data Source Spec:" will populate with the generated data source spec. Especially when using your own CSV files, you'll want to make sure that column attributes are defined correctly, since this sample application's tool will not infer correctly every time. It is a helpful starting point so we do not need to start from scratch each time.
+   Wait for up to 15 seconds and the text area underneath "Data Source Spec:" will populate with the generated data source spec. Especially when using your own CSV files, you'll want to make sure that column attributes are defined correctly, since this sample application's tool will not infer correctly every time. It is a helpful starting point so we do not need to start from scratch each time.
 
-⋅⋅⋅Now select "Add a Data Source Based on this Spec to Dashboard" to add it to the dashboard. The data source spec will be stored along with the dashboard.
+   Now select "Add a Data Source Based on this Spec to Dashboard" to add it to the dashboard. The data source spec will be stored along with the dashboard.
 
 6. Build your dashboard. You'll see that "New Data Source" has been added as a source within your dashboard building view. Click on this source and expand the table to see column names available to leverage in your visualization creation. For example, select "Quantity" and drag it into a quarter of the 2x2 layout dashboard. You'll see the total revenue across the full dataset. Now drag "Product line" into the same quarter of the dashboard. Cognos will use its "smarts" to create a column chart based on the column types of Product line and Revenue and update the visualization appopriately.
 
-⋅⋅⋅Drag "Quantity" into another corner of the dashboard to see the total quantity sold across all data. Now click on the column in the column chart representing Camping Equipment. You'll see that the quantity decreases, because the dashboard filters according to this selection.
+   Drag "Quantity" into another corner of the dashboard to see the total quantity sold across all data. Now click on the column in the column chart representing Camping Equipment. You'll see that the quantity decreases, because the dashboard filters according to this selection.
 
 7. Select "Save Current Dashboard" to save your dashboard. This is done by getting the dashboard specification of the currently opened dashboard as a JSON document and sending it to Cloudant. Data sources you've added are saved within this JSON document as well. Your Cognos Dashboard Embedded Client ID will be added to the document, so the next time you start a session with that Client ID, previously dashboards you've saved will be loaded.
