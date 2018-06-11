@@ -132,3 +132,5 @@ https://console.bluemix.net/docs/services/cognos-dashboard-embedded/working_with
 If you stepped through the [Using this application section](#using-this-application) using the [live (previously deployed) version of this app](https://cognos-dashboard-embedded-sample-app.mybluemix.net/), and you have not set it up for yourself yet, try [setting it up in your IBM Cloud account](#now-set-the-app-up-yourself-in-your-ibm-cloud-account). 
 
 If you have completed setting it up yourself, now you can think of some ways that you can provide value to a new or existing application by embedding engaging, interactive data visualizations. Good luck & happy building!
+
+_This sample application was built by Sam Ennis, Sales Engineer for IBM Embedded Analytics Solutions_
