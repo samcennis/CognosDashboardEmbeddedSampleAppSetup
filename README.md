@@ -104,7 +104,7 @@ Your app is all set up! Go to https://_your-app-name_.mybluemix.net to view your
 
 1. __Plug in the Client ID and Client Secret you gathered from your Cognos Dashboard Embedded service.__
 
-2. ___Select the "Create Session" button__ to send a request to the POST /sessions endpoint that we set up in our Node-RED backend. Take a look at this section of our Node-RED flow to view the request details sent to the Cognos Dashboard Embedded session creation endpoint. A session code is returned. This is also where an enryption key would be returned if we wanted to connect to a JDBC database and we could use this to encrypt database credentials server-side before returning them to the client.
+2. __Select the "Create Session" button__ to send a request to the POST /sessions endpoint that we set up in our Node-RED backend. Take a look at this section of our Node-RED flow to view the request details sent to the Cognos Dashboard Embedded session creation endpoint. A session code is returned. This is also where an enryption key would be returned if we wanted to connect to a JDBC database and we could use this to encrypt database credentials server-side before returning them to the client.
 
 3. __Select "Initialize API Framework"__ You'll see that an iframe is created within our #dashboard-container DIV. This is where we will interact with the Cognos Dashboard Embedded within our webpage.
 
