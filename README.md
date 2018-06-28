@@ -100,6 +100,10 @@ After replacing the /public directory, run `cf push your-app-name` one more time
 
 Your app is all set up! Go to https://_your-app-name_.mybluemix.net to view your personal version of this application. 
 
+## API Flow Diagram
+
+![alt text](/img/CDE Sample App API Flow.png)
+
 ## Using this application
 
 1. __Plug in the Client ID and Client Secret you gathered from your Cognos Dashboard Embedded (CDE) service.__
